@@ -230,6 +230,7 @@ static void loop(size_t numIterations, string filename) {
       }
       if (testStep != 0 && testStep % 100 == 0) {
         std::cout << fitness << '\t' << 1000000.0/(microseconds/100) << '\t' << invisible << std::endl;
+        std::cout.flush();
         microseconds = 0;
       }
     };
