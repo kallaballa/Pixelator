@@ -229,7 +229,7 @@ static void loop(size_t numIterations, string filename) {
           ++invisible;
       }
       if (testStep != 0 && testStep % 100 == 0) {
-        printf("Fitness = %0.10f%%, %0.4f%%, %d\n", fitness, 1000000.0/(microseconds/100), invisible);
+        std::cout << fitness << '\t' << 1000000.0/(microseconds/100) << '\t' << invisible << std::endl;
         microseconds = 0;
       }
     };
