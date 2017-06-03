@@ -152,9 +152,6 @@ double diff_pixels(SDL_Surface* testSurf) {
 }
 
 static void loop() {
-  struct timeval start;
-  gettimeofday(&start, NULL);
-
   DNA_TEST = DNA_BEST;
 
   double lowestFeat = std::numeric_limits<double>().max();
