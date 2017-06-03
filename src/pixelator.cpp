@@ -231,7 +231,7 @@ static void loop(size_t numIterations, string filename) {
 }
 
 int main(int argc, char ** argv) {
-  if (argc < 2 || argc > 3)
+  if (argc < 4 || argc > 5)
     std::cerr << "Usage: pixelator <number-of-rectangles> <number-of-iterations> <png-file> [<dna-file>]" << std::endl;
   else {
     size_t numShapes = std::stoi(string(argv[1]));
