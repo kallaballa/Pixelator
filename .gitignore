@@ -1,0 +1,9 @@
+/Default
+src/*.o
+src/*.dep
+*.png
+.cproject
+.project
+.settings/
+result/
+src/pixelator
