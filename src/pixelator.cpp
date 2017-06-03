@@ -151,7 +151,7 @@ double diff_pixels(SDL_Surface* testSurf) {
   return ((double)difference / (double)(HEIGHT * WIDTH * 4.0)) / (double)255.0;
 }
 
-static void loop() {
+static void loop(size_t numIterations, string filename) {
   DNA_TEST = DNA_BEST;
 
   double lowestFeat = std::numeric_limits<double>().max();
@@ -161,7 +161,7 @@ static void loop() {
   int testStep = 0;
   int bestStep = 0;
 
-  for (size_t i = 0; i < 100000000; ++i) {
+  for (size_t i = 0; i < numIterations; ++i) {
     off_t otherMutated = mutate();
     while(DNA_TEST[mutatedRect].a == 0 && !(otherMutated > 0 && DNA_TEST[otherMutated].a != 0) )
       otherMutated = mutate();
@@ -196,16 +196,16 @@ static void loop() {
 
       if (bestStep % 100 == 0) {
         std::stringstream ssname;
-        ssname << "result/" << std::setfill('0') << std::setw(10) << i << "_result.png";
+        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_result.png";
         CANVAS->save(ssname.str());
 
         ssname.str("");
-        ssname << "result/" << std::setfill('0') << std::setw(10) << i << "_feature.png";
+        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_feature.png";
         if(FEATURE_MAT.rows > 0)
           imwrite(ssname.str(), FEATURE_MAT);
 
         ssname.str("");
-        ssname << "result/" << std::setfill('0') << std::setw(10) << i << ".dna";
+        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << ".dna";
         std::ofstream of_dna(ssname.str());
         boost::archive::binary_oarchive oa(of_dna);
         oa << DNA_BEST;
@@ -232,12 +232,14 @@ static void loop() {
 
 int main(int argc, char ** argv) {
   if (argc < 2 || argc > 3)
-    std::cerr << "Usage: pixelator <number-of-rectangles> <png-file> [<dna-file>]" << std::endl;
+    std::cerr << "Usage: pixelator <number-of-rectangles> <number-of-iterations> <png-file> [<dna-file>]" << std::endl;
   else {
     size_t numShapes = std::stoi(string(argv[1]));
+    size_t numIterations = std::stoi(string(argv[2]));
+    string filename = string(argv[3]);
     DNA_BEST.resize(numShapes);
     DNA_TEST.resize(numShapes);
-    GOAL_SURF = IMG_Load(argv[2]);
+    GOAL_SURF = IMG_Load(argv[3]);
     GOAL_DATA = (unsigned char *)GOAL_SURF->pixels;
     WIDTH = GOAL_SURF->w;
     HEIGHT = GOAL_SURF->h;
@@ -255,15 +257,15 @@ int main(int argc, char ** argv) {
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
     CANVAS = new Canvas(WIDTH, HEIGHT, true);
-    if (argc == 4) {
-      std::cerr << argv[3] << std::endl;
-      std::ifstream if_dna(argv[3]);
+    if (argc == 5) {
+      std::cerr << argv[4] << std::endl;
+      std::ifstream if_dna(argv[4]);
       boost::archive::binary_iarchive ia(if_dna);
       ia >> DNA_BEST;
     } else {
       init_dna(DNA_BEST, WIDTH, HEIGHT);
     }
 
-    loop();
+    loop(numIterations, filename);
   }
 }
