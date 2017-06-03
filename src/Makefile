@@ -1,6 +1,6 @@
 TARGET := pixelator
 
-SRCS    := pixelator.cpp canvas.cpp features.cpp save_surf.cpp draw.cpp
+SRCS    := pixelator.cpp canvas.cpp features.cpp save_surf.cpp draw.cpp time_tracker.cpp
 
 #precompiled headers
 HEADERS := 

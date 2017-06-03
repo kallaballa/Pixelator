@@ -16,6 +16,7 @@
 #include "helpers.hpp"
 #include "dna.hpp"
 #include "draw.hpp"
+#include "time_tracker.hpp"
 
 using std::vector;
 
@@ -153,7 +154,8 @@ double diff_pixels(SDL_Surface* testSurf) {
 
 static void loop(size_t numIterations, string filename) {
   DNA_TEST = DNA_BEST;
-
+  TimeTracker& tt = *TimeTracker::getInstance();
+  size_t microseconds = 0;
   double lowestFeat = std::numeric_limits<double>().max();
   double lowestPix = std::numeric_limits<double>().max();
   double lowestDiff = std::numeric_limits<double>().max();
@@ -162,72 +164,77 @@ static void loop(size_t numIterations, string filename) {
   int bestStep = 0;
 
   for (size_t i = 0; i < numIterations; ++i) {
-    off_t otherMutated = mutate();
-    while(DNA_TEST[mutatedRect].a == 0 && !(otherMutated > 0 && DNA_TEST[otherMutated].a != 0) )
-      otherMutated = mutate();
+    auto f = [&]() {
+      off_t otherMutated = mutate();
+      while(DNA_TEST[mutatedRect].a == 0 && !(otherMutated > 0 && DNA_TEST[otherMutated].a != 0) )
+        otherMutated = mutate();
 
-    draw_dna(DNA_TEST, CANVAS);
+      draw_dna(DNA_TEST, CANVAS);
 
-    fitness = (1.0 - lowestDiff) * 100;
+      fitness = (1.0 - lowestDiff) * 100;
 
-    double pixDiff = diff_pixels(CANVAS->getSurface());
-    assert(pixDiff <= 1.0 && pixDiff >= 0.0);
+      double pixDiff = diff_pixels(CANVAS->getSurface());
+      assert(pixDiff <= 1.0 && pixDiff >= 0.0);
 
-    double featDiff;
-    if(pixDiff < 0.00)
-      featDiff = diff_features(CANVAS->getSurface(), GOAL_RGB, FEATURE_MAT);
-    else
-      featDiff = 1.0;
+      double featDiff;
+      if(pixDiff < 0.00)
+        featDiff = diff_features(CANVAS->getSurface(), GOAL_RGB, FEATURE_MAT);
+      else
+        featDiff = 1.0;
 
-    assert(featDiff <= 1.0 && featDiff >= 0.0);
+      assert(featDiff <= 1.0 && featDiff >= 0.0);
 
-    double diff = (pixDiff + featDiff) / 2;
+      double diff = (pixDiff + featDiff) / 2;
 
-    if (diff <= lowestDiff) {
-      lowestFeat = featDiff;
-      lowestPix = pixDiff;
-      ++bestStep;
-      // test is good, copy to best
-      DNA_BEST[mutatedRect] = DNA_TEST[mutatedRect];
-      if (otherMutated >= 0)
-        DNA_BEST[otherMutated] = DNA_TEST[otherMutated];
+      if (diff <= lowestDiff) {
+        lowestFeat = featDiff;
+        lowestPix = pixDiff;
+        ++bestStep;
+        // test is good, copy to best
+        DNA_BEST[mutatedRect] = DNA_TEST[mutatedRect];
+        if (otherMutated >= 0)
+          DNA_BEST[otherMutated] = DNA_TEST[otherMutated];
 
-      lowestDiff = diff;
+        lowestDiff = diff;
 
-      if (bestStep % 100 == 0) {
-        std::stringstream ssname;
-        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_result.png";
-        CANVAS->save(ssname.str());
+        if (bestStep != 0 && bestStep % 100 == 0) {
+          std::stringstream ssname;
+          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_result.png";
+          CANVAS->save(ssname.str());
 
-        ssname.str("");
-        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_feature.png";
-        if(FEATURE_MAT.rows > 0)
-          imwrite(ssname.str(), FEATURE_MAT);
+          ssname.str("");
+          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_feature.png";
+          if(FEATURE_MAT.rows > 0)
+            imwrite(ssname.str(), FEATURE_MAT);
 
-        ssname.str("");
-        ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << ".dna";
-        std::ofstream of_dna(ssname.str());
-        boost::archive::binary_oarchive oa(of_dna);
-        oa << DNA_BEST;
+          ssname.str("");
+          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << ".dna";
+          std::ofstream of_dna(ssname.str());
+          boost::archive::binary_oarchive oa(of_dna);
+          oa << DNA_BEST;
+        }
+      } else {
+        // test sucks, copy best back over test
+        DNA_TEST[mutatedRect] = DNA_BEST[mutatedRect];
+
+        if (otherMutated >= 0)
+          DNA_TEST[otherMutated] = DNA_BEST[otherMutated];
       }
-    } else {
-      // test sucks, copy best back over test
-      DNA_TEST[mutatedRect] = DNA_BEST[mutatedRect];
 
-      if (otherMutated >= 0)
-        DNA_TEST[otherMutated] = DNA_BEST[otherMutated];
-    }
+      testStep++;
 
-    testStep++;
-
-    int invisible = 0;
-    for(size_t i = 0; i < DNA_BEST.size(); ++i) {
-      if(DNA_BEST[i].a == 0)
-        ++invisible;
-    }
-    if (testStep % 100 == 0)
-      printf("Fitness = %0.10f%%, %0.10f, %0.10f, %0.10f, %d\n", fitness, lowestPix, lowestFeat, lowestDiff, invisible);
-  }
+      int invisible = 0;
+      for(size_t i = 0; i < DNA_BEST.size(); ++i) {
+        if(DNA_BEST[i].a == 0)
+          ++invisible;
+      }
+      if (testStep != 0 && testStep % 100 == 0) {
+        printf("Fitness = %0.10f%%, %0.4f%%, %d\n", fitness, 1000000.0/(microseconds/100), invisible);
+        microseconds = 0;
+      }
+    };
+    microseconds += tt.measure(f);
+   }
 }
 
 int main(int argc, char ** argv) {
