@@ -70,7 +70,7 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
       dna[i].points[j].x = random_real((double)WIDTH);
       dna[i].points[j].y = random_real((double)HEIGHT);
     }
-/*
+
     size_t x = min(dna[i].points[0].x,dna[i].points[1].x);
     size_t y = min(dna[i].points[0].y,dna[i].points[1].y);
 
@@ -79,6 +79,7 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
 
 
     Uint8 r, g, b;
+
     for(size_t k = 0; k < w; ++k) {
       for(size_t l = 0; l < h; ++l) {
         Uint32 p = get_pixel(CANVAS->getSurface(), x + k, y + l);
@@ -93,9 +94,9 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     dna[i].g = dna[i].g / (w * h) / 255.0;
     dna[i].b = dna[i].b / (w * h) / 255.0;
     dna[i].a = 0;
-*/
 
-    if(random_real(1.0) > 0.5) {
+    std::cerr << (int)r << " " << (int)g << " " << (int)b << std::endl;
+  /*  if(random_real(1.0) > 0.5) {
       dna[i].r = 0;
       dna[i].g = 0;
       dna[i].b = 1.0;
@@ -104,7 +105,7 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
       dna[i].g = 1.0;
       dna[i].b = 1.0;
     }
-    dna[i].a = 0;
+    dna[i].a = 0;*/
   }
 }
 
