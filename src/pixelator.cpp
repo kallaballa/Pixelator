@@ -32,6 +32,36 @@ Dna DNA_TEST(1);
 
 int mutatedRect;
 
+Uint32 get_pixel(SDL_Surface *surface, int x, int y)
+{
+    int bpp = surface->format->BytesPerPixel;
+    /* Here p is the address to the pixel we want to retrieve */
+    Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
+
+    switch(bpp) {
+    case 1:
+        return *p;
+        break;
+
+    case 2:
+        return *(Uint16 *)p;
+        break;
+
+    case 3:
+        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
+            return p[0] << 16 | p[1] << 8 | p[2];
+        else
+            return p[0] | p[1] << 8 | p[2] << 16;
+        break;
+
+    case 4:
+        return *(Uint32 *)p;
+        break;
+
+    default:
+        return 0;       /* shouldn't happen, but avoids warnings */
+    }
+}
 
 void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
   for (size_t i = 0; i < dna.size(); i++) {
@@ -39,11 +69,41 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
       dna[i].points[j].x = random_real((double)WIDTH);
       dna[i].points[j].y = random_real((double)HEIGHT);
     }
+/*
+    size_t x = min(dna[i].points[0].x,dna[i].points[1].x);
+    size_t y = min(dna[i].points[0].y,dna[i].points[1].y);
 
-     dna[i].r = random_real(1.0);
-     dna[i].g = random_real(1.0);
-     dna[i].b = random_real(1.0);
-     dna[i].a = 0;
+    size_t w = round(fabs(dna[i].points[0].x - dna[i].points[1].x));
+    size_t h = round(fabs(dna[i].points[0].y - dna[i].points[1].y));
+
+
+    Uint8 r, g, b;
+    for(size_t k = 0; k < w; ++k) {
+      for(size_t l = 0; l < h; ++l) {
+        Uint32 p = get_pixel(CANVAS->getSurface(), x + k, y + l);
+        SDL_GetRGB(p, CANVAS->getSurface()->format, &r, &g, &b);
+        dna[i].r += r;
+        dna[i].g += g;
+        dna[i].b += b;
+      }
+    }
+
+    dna[i].r = dna[i].r / (w * h) / 255.0;
+    dna[i].g = dna[i].g / (w * h) / 255.0;
+    dna[i].b = dna[i].b / (w * h) / 255.0;
+    dna[i].a = 0;
+*/
+
+    if(random_real(1.0) > 0.5) {
+      dna[i].r = 0;
+      dna[i].g = 0;
+      dna[i].b = 1.0;
+    } else {
+      dna[i].r = 1.0;
+      dna[i].g = 1.0;
+      dna[i].b = 1.0;
+    }
+    dna[i].a = 0;
   }
 }
 
@@ -55,30 +115,22 @@ int mutate(void) {
   // mutate color
   if (roulette < 1) {
     if (DNA_TEST[mutatedRect].a < 0.01 // completely transparent rects are stupid
-    || roulette < 0.25) {
+    || roulette <= 0.50) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].a += random_real(0.1);
         DNA_TEST[mutatedRect].a = clamp(DNA_TEST[mutatedRect].a, 0.0, 1.0);
       } else
         DNA_TEST[mutatedRect].a = random_real(1.0);
-    } else if (roulette < 0.50) {
-      if (drastic < 1) {
-        DNA_TEST[mutatedRect].r += random_real(0.1);
-        DNA_TEST[mutatedRect].r = clamp(DNA_TEST[mutatedRect].r, 0.0, 1.0);
-      } else
-        DNA_TEST[mutatedRect].r = random_real(1.0);
-    } else if (roulette < 0.75) {
-      if (drastic < 1) {
-        DNA_TEST[mutatedRect].g += random_real(0.1);
-        DNA_TEST[mutatedRect].g = clamp(DNA_TEST[mutatedRect].g, 0.0, 1.0);
-      } else
-        DNA_TEST[mutatedRect].g = random_real(1.0);
-    } else {
-      if (drastic < 1) {
-        DNA_TEST[mutatedRect].b += random_real(0.1);
-        DNA_TEST[mutatedRect].b = clamp(DNA_TEST[mutatedRect].b, 0.0, 1.0);
-      } else
-        DNA_TEST[mutatedRect].b = random_real(1.0);
+    } else if (roulette > 0.50) {
+      if(DNA_TEST[mutatedRect].r == 1.0) {
+        DNA_TEST[mutatedRect].r = 0;
+        DNA_TEST[mutatedRect].g = 0;
+        DNA_TEST[mutatedRect].b = 1.0;
+      } else {
+        DNA_TEST[mutatedRect].r = 1.0;
+        DNA_TEST[mutatedRect].g = 1.0;
+        DNA_TEST[mutatedRect].b = 1.0;
+      }
     }
   }
 
@@ -264,7 +316,7 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, true);
+    CANVAS = new Canvas(WIDTH, HEIGHT, false);
     if (argc == 5) {
       std::cerr << argv[4] << std::endl;
       std::ifstream if_dna(argv[4]);
