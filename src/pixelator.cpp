@@ -229,10 +229,12 @@ static void loop(size_t numIterations, string filename) {
       assert(pixDiff <= 1.0 && pixDiff >= 0.0);
 
       double featDiff;
+#ifndef _NO_OPENCV
       if(pixDiff < 0.00)
         featDiff = diff_features(CANVAS->getSurface(), GOAL_RGB, FEATURE_MAT);
       else
-        featDiff = 1.0;
+#endif
+	featDiff = 1.0;
 
       assert(featDiff <= 1.0 && featDiff >= 0.0);
 
@@ -316,7 +318,7 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, false);
+    CANVAS = new Canvas(WIDTH, HEIGHT, true);
     if (argc == 5) {
       std::cerr << argv[4] << std::endl;
       std::ifstream if_dna(argv[4]);
