@@ -7,13 +7,15 @@
 Canvas::Canvas(size_t screenWidth, size_t screenHeight, bool offscreen) :
   screen(NULL), screenWidth(screenWidth), screenHeight(screenHeight), offscreen(offscreen) {
   if (screenWidth > 0 && screenHeight > 0) {
-    if (SDL_Init(SDL_INIT_VIDEO) == -1) {
-      printf("Can't init SDL:  %s\n", SDL_GetError());
-      exit(1);
-    }
+
     atexit(SDL_Quit);
-    if(!offscreen)
+    if(!offscreen) {
+      if (SDL_Init(SDL_INIT_VIDEO) == -1) {
+        printf("Can't init SDL:  %s\n", SDL_GetError());
+        exit(1);
+      }
       screen = SDL_SetVideoMode(screenWidth, screenHeight, 24, SDL_SWSURFACE);
+    }
     else
       screen = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 24, 0, 0, 0, 0);
 
