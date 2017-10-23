@@ -8,6 +8,7 @@
 #include <boost/serialization/vector.hpp>
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
+#include <boost/filesystem.hpp>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_gfxPrimitives.h>
 
@@ -275,8 +276,9 @@ static void loop(size_t numIterations, string filename) {
     microseconds += tt.measure(f);
    }
 
+  string prefix = boost::filesystem::path(filename).stem().string();
   std::stringstream ssname;
-  ssname << "result/" << filename << "_result.png";
+  ssname << "result/" << prefix << "_result.png";
   CANVAS->save(ssname.str());
 
   /*
@@ -286,7 +288,7 @@ static void loop(size_t numIterations, string filename) {
     imwrite(ssname.str(), FEATURE_MAT);*/
 
   ssname.str("");
-  ssname << "result/" << filename << ".dna";
+  ssname << "result/" << prefix << ".dna";
   std::ofstream of_dna(ssname.str());
   boost::archive::binary_oarchive oa(of_dna);
   oa << DNA_BEST;
