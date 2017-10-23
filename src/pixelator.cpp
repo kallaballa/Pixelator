@@ -251,22 +251,6 @@ static void loop(size_t numIterations, string filename) {
 
         lowestDiff = diff;
 
-        if (bestStep != 0 && bestStep % 100 == 0) {
-          std::stringstream ssname;
-          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_result.png";
-          CANVAS->save(ssname.str());
-
-          ssname.str("");
-          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << "_feature.png";
-          if(FEATURE_MAT.rows > 0)
-            imwrite(ssname.str(), FEATURE_MAT);
-
-          ssname.str("");
-          ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << i << ".dna";
-          std::ofstream of_dna(ssname.str());
-          boost::archive::binary_oarchive oa(of_dna);
-          oa << DNA_BEST;
-        }
       } else {
         // test sucks, copy best back over test
         DNA_TEST[mutatedRect] = DNA_BEST[mutatedRect];
@@ -290,6 +274,22 @@ static void loop(size_t numIterations, string filename) {
     };
     microseconds += tt.measure(f);
    }
+
+  std::stringstream ssname;
+  ssname << "result/" << filename << "_result.png";
+  CANVAS->save(ssname.str());
+
+  /*
+  ssname.str("");
+  ssname << "result/" << filename << "_" << std::setfill('0') << std::setw(10) << "_feature.png";
+  if(FEATURE_MAT.rows > 0)
+    imwrite(ssname.str(), FEATURE_MAT);*/
+
+  ssname.str("");
+  ssname << "result/" << filename << ".dna";
+  std::ofstream of_dna(ssname.str());
+  boost::archive::binary_oarchive oa(of_dna);
+  oa << DNA_BEST;
 }
 
 int main(int argc, char ** argv) {
