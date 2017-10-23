@@ -95,7 +95,6 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     dna[i].b = dna[i].b / (w * h) / 255.0;
     dna[i].a = 0;
 
-    std::cerr << (int)r << " " << (int)g << " " << (int)b << std::endl;
   /*  if(random_real(1.0) > 0.5) {
       dna[i].r = 0;
       dna[i].g = 0;
