@@ -33,6 +33,10 @@ CXXFLAGS += -m32
 LDFLAGS += -L/usr/lib -static-libgcc -m32 -Wl,-Bstatic
 endif 
 
+ifdef WITHOUT_OPENCV
+CXXFLAGS += -D_NO_OPENCV
+endif
+
 UNAME_S := $(shell uname -s)
 
 ifeq ($(UNAME_S), Darwin)
