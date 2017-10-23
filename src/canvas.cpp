@@ -32,11 +32,9 @@ void checkExit() {
 }
 
 void Canvas::fillRectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-  checkExit();
-    Sint16 xv[4] = { x, x + w, x + w, x };
-    Sint16 yv[4] = { y, y, y + h,  y + h};
-    filledPolygonRGBA(screen,xv,yv,4,r,g,b,a);
-
+    checkExit();
+    SDL_Rect dst = { x, y , w, h };
+    SDL_FillRect(screen, &dst, SDL_MapRGBA(screen->format, r, g, b, a));
 }
 
 
