@@ -13,14 +13,17 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#ifndef _NO_OPENCV
 #include <opencv2/ocl/ocl.hpp>
 #include <opencv2/legacy/legacy.hpp>
+#endif
 #include <SDL/SDL.h>
 
 using std::vector;
 using namespace cv;
+#ifndef _NO_OPENCV
 using namespace cv::ocl;
-
+#endif
 
 int ratioTest(std::vector<std::vector<cv::DMatch> > &matches);
 cv::Mat ransacTest(const std::vector<cv::DMatch>& matches,

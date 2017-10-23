@@ -11,6 +11,7 @@
 
 int ratioTest(std::vector<std::vector<cv::DMatch> >
     &matches) {
+#ifndef _NO_OPENCV
         int removed=0;
         // for all matches
         for (std::vector<std::vector<cv::DMatch> >::iterator
@@ -30,6 +31,9 @@ int ratioTest(std::vector<std::vector<cv::DMatch> >
                 }
         }
         return removed;
+#else
+        return 0;
+#endif
 }
 
 cv::Mat ransacTest(
@@ -38,6 +42,7 @@ cv::Mat ransacTest(
     const std::vector<cv::KeyPoint>& keypoints2,
     std::vector<cv::DMatch>& outMatches)
 {
+#ifndef _NO_OPENCV
     // Convert keypoints into Point2f
     std::vector<cv::Point2f> points1, points2;
     for (std::vector<cv::DMatch>::
@@ -77,13 +82,17 @@ cv::Mat ransacTest(
         }
     }
     return fundemental;
+#else
+    return cv::Mat();
+#endif
 }
 
 void symmetryTest(
     const std::vector<std::vector<cv::DMatch>>& matches1,
     const std::vector<std::vector<cv::DMatch>>& matches2,
     std::vector<cv::DMatch>& symMatches) {
-        // for all matches image 1 -> image 2
+#ifndef _NO_OPENCV
+  // for all matches image 1 -> image 2
         for (std::vector<std::vector<cv::DMatch>>::
             const_iterator matchIterator1= matches1.begin();
             matchIterator1!= matches1.end(); ++matchIterator1) {
@@ -112,8 +121,10 @@ void symmetryTest(
                     }
                 }
         }
+#endif
 }
 double diff_features(SDL_Surface * test_surf, Mat& goalRGB, Mat& featureMat) {
+#ifndef _NO_OPENCV
   Mat testRGB(test_surf->w,test_surf->h,CV_8UC3,test_surf->pixels,test_surf->pitch);
   Mat img_1;
   Mat img_2;
@@ -200,4 +211,7 @@ double diff_features(SDL_Surface * test_surf, Mat& goalRGB, Mat& featureMat) {
    }
 
    return (avgDist / 100.0);
+#else
+   return 0;
+#endif
 }
