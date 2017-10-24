@@ -8,6 +8,7 @@
 #include "draw.hpp"
 #include "dna.hpp"
 #include "canvas.hpp"
+#include <cmath>
 
 void draw_rect(Rectangle& rect, Canvas* canvas) {
   if(rect.a == 0)
