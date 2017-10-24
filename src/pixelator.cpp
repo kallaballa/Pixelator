@@ -112,7 +112,6 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     dna[i].a = 0;*/
   }
 }
-
 int mutate(void) {
   mutatedRect = random_int(DNA_TEST.size());
   double roulette = random_real(2.8);
@@ -120,23 +119,31 @@ int mutate(void) {
 
   // mutate color
   if (roulette < 1) {
-    if (DNA_TEST[mutatedRect].a < 0.01 // completely transparent rects are stupid
-    || roulette <= 0.50) {
+    //DNA_TEST[mutatedRect].a < 0.01 // completely transparent rects are stupid
+    if (roulette < 0.25) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].a += random_real(0.1);
         DNA_TEST[mutatedRect].a = clamp(DNA_TEST[mutatedRect].a, 0.0, 1.0);
       } else
         DNA_TEST[mutatedRect].a = random_real(1.0);
-    } else if (roulette > 0.50) {
-      if(DNA_TEST[mutatedRect].r == 1.0) {
-        DNA_TEST[mutatedRect].r = 0;
-        DNA_TEST[mutatedRect].g = 0;
-        DNA_TEST[mutatedRect].b = 1.0;
-      } else {
-        DNA_TEST[mutatedRect].r = 1.0;
-        DNA_TEST[mutatedRect].g = 1.0;
-        DNA_TEST[mutatedRect].b = 1.0;
-      }
+    } else if (roulette < 0.50) {
+      if (drastic < 1) {
+        DNA_TEST[mutatedRect].r += random_real(0.1);
+        DNA_TEST[mutatedRect].r = clamp(DNA_TEST[mutatedRect].r, 0.0, 1.0);
+      } else
+        DNA_TEST[mutatedRect].r = random_real(1.0);
+    } else if (roulette < 0.75) {
+      if (drastic < 1) {
+        DNA_TEST[mutatedRect].g += random_real(0.1);
+        DNA_TEST[mutatedRect].g = clamp(DNA_TEST[mutatedRect].g, 0.0, 1.0);
+      } else
+        DNA_TEST[mutatedRect].g = random_real(1.0);
+    } else {
+      if (drastic < 1) {
+        DNA_TEST[mutatedRect].b += random_real(0.1);
+        DNA_TEST[mutatedRect].b = clamp(DNA_TEST[mutatedRect].b, 0.0, 1.0);
+      } else
+        DNA_TEST[mutatedRect].b = random_real(1.0);
     }
   }
 
