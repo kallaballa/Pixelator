@@ -11,7 +11,7 @@
 #include <cmath>
 
 void draw_rect(Rectangle& rect, Canvas* canvas) {
-  if(rect.a == 0)
+  if(rect.a < 0.01)
     return;
   int x = rect.points[0].x;
   int y = rect.points[0].y;

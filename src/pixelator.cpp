@@ -70,7 +70,7 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
       dna[i].points[j].x = random_real((double)WIDTH);
       dna[i].points[j].y = random_real((double)HEIGHT);
     }
-/*
+
     size_t x = min(dna[i].points[0].x,dna[i].points[1].x);
     size_t y = min(dna[i].points[0].y,dna[i].points[1].y);
 
@@ -94,10 +94,10 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     dna[i].g = dna[i].g / (w * h) / 255.0;
     dna[i].b = dna[i].b / (w * h) / 255.0;
     dna[i].a = 0;
-*/
-    dna[i].r = random_real(1.0);
-    dna[i].g = random_real(1.0);
-    dna[i].b = random_real(1.0);
+
+    dna[i].r = (dna[i].r + random_real(1.0)) / 2;
+    dna[i].g = (dna[i].g + random_real(1.0)) / 2;
+    dna[i].b = (dna[i].b + random_real(1.0)) / 2;
     dna[i].a = 0;
 
 /*  if(random_real(1.0) > 0.5) {
@@ -175,45 +175,36 @@ int mutate(void) {
   return -1;
 }
 
-int MAX_FITNESS = -1;
 
 double diff_pixels(SDL_Surface* testSurf) {
   unsigned char * testData = (unsigned char *)testSurf->pixels;
 
   int difference = 0;
 
-  int maxFitness = 0;
-  int maxDiff = 0;
   for (size_t y = 0; y < HEIGHT; y++) {
     for (size_t x = 0; x < WIDTH; x++) {
       int thispixel = y * WIDTH * 3 + x * 3;
 
-      unsigned char testB = testData[thispixel];
-      unsigned char testG = testData[thispixel + 1];
-      unsigned char testR = testData[thispixel + 2];
+      Uint32 tp = get_pixel(testSurf, x, y);
+      Uint32 tg = get_pixel(GOAL_SURF, x, y);
 
-      unsigned char goalB = GOAL_DATA[thispixel];
-      unsigned char goalG = GOAL_DATA[thispixel + 1];
-      unsigned char goalR = GOAL_DATA[thispixel + 2];
+      unsigned char testB = tp;
+      unsigned char testG = tp >> 8;
+      unsigned char testR = tp >> 16;
 
-      if (MAX_FITNESS == -1)
-        maxFitness += goalR + goalG + goalB;
+      unsigned char goalB = tg;
+      unsigned char goalG = tg >> 8;
+      unsigned char goalR = tg >> 16;
 
       int localDiff = 0;
       localDiff += abs(testR - goalR);
       localDiff += abs(testG - goalG);
       localDiff += abs(testB - goalB);
 
-      if (localDiff > maxDiff) {
-        maxDiff = localDiff;
-      }
-
       difference += localDiff;
     }
   }
 
-  if (MAX_FITNESS == -1)
-    MAX_FITNESS = maxFitness;
   return ((double)difference / (double)(HEIGHT * WIDTH * 4.0)) / (double)255.0;
 }
 
@@ -276,7 +267,7 @@ static void loop(size_t numIterations, string filename) {
 
       int invisible = 0;
       for(size_t i = 0; i < DNA_BEST.size(); ++i) {
-        if(DNA_BEST[i].a < 0.01)
+        if(DNA_BEST[i].a == 0.0)
           ++invisible;
       }
       if (testStep != 0 && testStep % 100 == 0) {
