@@ -18,6 +18,12 @@ public:
   SDL_Surface* getSurface() {
     return screen;
   }
+  size_t width() {
+    return screenWidth;
+  }
+  size_t height() {
+    return screenHeight;
+  }
 private:
   class SDL_Surface *screen;
 

@@ -10,7 +10,7 @@
 #include "canvas.hpp"
 #include <cmath>
 
-void draw_rect(Rectangle& rect, Canvas* canvas) {
+void draw_rect(const Rectangle& rect, Canvas* canvas) {
   if(rect.a < 0.01)
     return;
   int x = rect.points[0].x;
@@ -21,6 +21,8 @@ void draw_rect(Rectangle& rect, Canvas* canvas) {
 }
 
 void draw_dna(Dna& dna, Canvas* canvas) {
+  Rectangle r = {0,0,0,1,{{0,0},{canvas->width(), canvas->height()}}};
+  draw_rect(r, canvas);
   for (size_t i = 0; i < dna.size(); i++) {
     draw_rect(dna[i], canvas);
   }
