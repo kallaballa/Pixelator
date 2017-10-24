@@ -119,8 +119,8 @@ int mutate(void) {
 
   // mutate color
   if (roulette < 1) {
-    //DNA_TEST[mutatedRect].a < 0.01 // completely transparent rects are stupid
-    if (roulette < 0.25) {
+    //// completely transparent rects are stupid
+    if (DNA_TEST[mutatedRect].a < 0.01  || roulette < 0.25) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].a += random_real(0.1);
         DNA_TEST[mutatedRect].a = clamp(DNA_TEST[mutatedRect].a, 0.0, 1.0);
