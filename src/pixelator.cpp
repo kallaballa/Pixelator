@@ -276,7 +276,7 @@ static void loop(size_t numIterations, string filename) {
 
       int invisible = 0;
       for(size_t i = 0; i < DNA_BEST.size(); ++i) {
-        if(DNA_BEST[i].a == 0)
+        if(DNA_BEST[i].a < 0.01)
           ++invisible;
       }
       if (testStep != 0 && testStep % 100 == 0) {
