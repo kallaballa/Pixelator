@@ -33,34 +33,22 @@ Dna DNA_TEST(1);
 
 int mutatedRect;
 
-Uint32 get_pixel(SDL_Surface *surface, int x, int y)
+void get_pixel(SDL_Surface *surface, const int& x, const int& y, Uint8& r,Uint8& g,Uint8& b,Uint8& a)
 {
     int bpp = surface->format->BytesPerPixel;
     /* Here p is the address to the pixel we want to retrieve */
     Uint8 *p = (Uint8 *)surface->pixels + y * surface->pitch + x * bpp;
 
-    switch(bpp) {
-    case 1:
-        return *p;
-        break;
-
-    case 2:
-        return *(Uint16 *)p;
-        break;
-
-    case 3:
-        if(SDL_BYTEORDER == SDL_BIG_ENDIAN)
-            return p[0] << 16 | p[1] << 8 | p[2];
-        else
-            return p[0] | p[1] << 8 | p[2] << 16;
-        break;
-
-    case 4:
-        return *(Uint32 *)p;
-        break;
-
-    default:
-        return 0;       /* shouldn't happen, but avoids warnings */
+    if(SDL_BYTEORDER == SDL_BIG_ENDIAN) {
+	r = p[3];
+	g = p[2];
+	b = p[1];
+	a = p[0];
+    } else {
+	r = p[0];
+	g = p[1];
+	b = p[2];
+	a = p[3];
     }
 }
 
@@ -78,12 +66,11 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     size_t h = round(fabs(dna[i].points[0].y - dna[i].points[1].y));
 
 
-    Uint8 r, g, b;
+    Uint8 r, g, b, a;
 
     for(size_t k = 0; k < w; ++k) {
       for(size_t l = 0; l < h; ++l) {
-        Uint32 p = get_pixel(CANVAS->getSurface(), x + k, y + l);
-        SDL_GetRGB(p, CANVAS->getSurface()->format, &r, &g, &b);
+        get_pixel(CANVAS->getSurface(), x + k, y + l, r ,g, b, a);
         dna[i].r += r;
         dna[i].g += g;
         dna[i].b += b;
@@ -120,6 +107,7 @@ int mutate(void) {
   // mutate color
   if (roulette < 1) {
     //// completely transparent rects are stupid
+    //
     if (DNA_TEST[mutatedRect].a < 0.01  || roulette < 0.25) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].a += random_real(0.1);
@@ -177,26 +165,22 @@ int mutate(void) {
 
 
 double diff_pixels(SDL_Surface* testSurf) {
-  unsigned char * testData = (unsigned char *)testSurf->pixels;
-
   int difference = 0;
-
+  int localDiff = 0;
+  Uint8 testB;
+  Uint8 testG;
+  Uint8 testR;
+  Uint8 goalB;
+  Uint8 goalG;
+  Uint8 goalR;
+  Uint8 a;
   for (size_t y = 0; y < HEIGHT; y++) {
     for (size_t x = 0; x < WIDTH; x++) {
-      int thispixel = y * WIDTH * 3 + x * 3;
+      localDiff = 0;
 
-      Uint32 tp = get_pixel(testSurf, x, y);
-      Uint32 tg = get_pixel(GOAL_SURF, x, y);
+      get_pixel(testSurf, x, y, testR,testG,testB,a);
+      get_pixel(GOAL_SURF, x, y, goalR,goalG,goalB,a);
 
-      unsigned char testB = tp;
-      unsigned char testG = tp >> 8;
-      unsigned char testR = tp >> 16;
-
-      unsigned char goalB = tg;
-      unsigned char goalG = tg >> 8;
-      unsigned char goalR = tg >> 16;
-
-      int localDiff = 0;
       localDiff += abs(testR - goalR);
       localDiff += abs(testG - goalG);
       localDiff += abs(testB - goalB);
@@ -323,7 +307,7 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, true);
+    CANVAS = new Canvas(WIDTH, HEIGHT, false);
     if (argc == 5) {
       std::cerr << argv[4] << std::endl;
       std::ifstream if_dna(argv[4]);

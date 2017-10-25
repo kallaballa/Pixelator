@@ -52,6 +52,10 @@ void png_user_error(png_structp ctx, png_const_charp str)
 
 int png_save_surface(const char *filename, SDL_Surface *surf)
 {
+	SDL_Surface* tmp = SDL_CreateRGBSurface(0, 100, 100, 24, 0, 0, 0, 0);
+	SDL_Surface* rgb = SDL_ConvertSurface(surf, tmp->format, 0);
+	surf = rgb;
+	SDL_FreeSurface(tmp);
 	FILE *fp;
 	png_structp png_ptr;
 	png_infop info_ptr;
@@ -115,7 +119,7 @@ int png_save_surface(const char *filename, SDL_Surface *surf)
 	free(row_pointers);
 	png_destroy_write_struct(&png_ptr, &info_ptr);
 	fclose(fp);
-
+	SDL_FreeSurface(rgb);
 	return 0;
 }
 

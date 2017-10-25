@@ -1,10 +1,3 @@
-/*
- * draw.cpp
- *
- *  Created on: Jun 2, 2017
- *      Author: elchaschab
- */
-
 #include "draw.hpp"
 #include "dna.hpp"
 #include "canvas.hpp"
@@ -21,8 +14,8 @@ void draw_rect(const Rectangle& rect, Canvas* canvas) {
 }
 
 void draw_dna(Dna& dna, Canvas* canvas) {
-  Rectangle r = {0,0,0,1,{{0,0},{canvas->width(), canvas->height()}}};
-  draw_rect(r, canvas);
+  SDL_FillRect(canvas->getSurface(), NULL, SDL_MapRGBA(canvas->getSurface()->format,0,0,0,255));
+
   for (size_t i = 0; i < dna.size(); i++) {
     draw_rect(dna[i], canvas);
   }

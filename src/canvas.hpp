@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <string>
 #include <SDL/SDL.h>
-#include "CImg.hpp"
 
 using std::string;
 
@@ -12,7 +11,7 @@ class Canvas {
 public:
   Canvas(size_t screenWidth, size_t screenHeight, bool offscreen = false);
   virtual ~Canvas() {};
-  void fillRectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+  void fillRectangle(const Sint16& x, const Sint16& y, const Uint16& w, const Uint16& h, const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a);
   void update();
   void save(const string& filename);
   SDL_Surface* getSurface() {

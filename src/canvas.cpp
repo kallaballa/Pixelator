@@ -14,10 +14,10 @@ Canvas::Canvas(size_t screenWidth, size_t screenHeight, bool offscreen) :
         printf("Can't init SDL:  %s\n", SDL_GetError());
         exit(1);
       }
-      screen = SDL_SetVideoMode(screenWidth, screenHeight, 24, SDL_SWSURFACE);
+      screen = SDL_SetVideoMode(screenWidth, screenHeight, 32, SDL_SWSURFACE);
     }
     else
-      screen = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 24, 0, 0, 0, 0);
+      screen = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 0, 0, 0, SDL_SWSURFACE);
 
     if (screen == NULL) {
       printf("Can't set video mode: %s\n", SDL_GetError());
@@ -33,10 +33,11 @@ void checkExit() {
   }
 }
 
-void Canvas::fillRectangle(Sint16 x, Sint16 y, Sint16 w, Sint16 h, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+void Canvas::fillRectangle(const Sint16& x, const Sint16& y, const Uint16& w, const Uint16& h, const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a) {
     checkExit();
-    SDL_Rect dst = { x, y , w, h };
-    SDL_FillRect(screen, &dst, SDL_MapRGBA(screen->format, r, g, b, a));
+    Sint16 xv[4] = { x, x + w, x + w, x };
+    Sint16 yv[4] = { y, y, y + h,  y + h};
+    filledPolygonRGBA(screen,xv,yv,4,r,g,b,a);
 }
 
 

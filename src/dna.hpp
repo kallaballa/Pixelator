@@ -1,10 +1,3 @@
-/*
- * dna.hpp
- *
- *  Created on: Jun 2, 2017
- *      Author: elchaschab
- */
-
 #ifndef SRC_DNA_HPP_
 #define SRC_DNA_HPP_
 

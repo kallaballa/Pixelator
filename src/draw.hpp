@@ -1,10 +1,3 @@
-/*
- * draw.hpp
- *
- *  Created on: Jun 2, 2017
- *      Author: elchaschab
- */
-
 #ifndef SRC_DRAW_HPP_
 #define SRC_DRAW_HPP
 
