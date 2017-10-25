@@ -11,7 +11,10 @@ class Canvas {
 public:
   Canvas(size_t screenWidth, size_t screenHeight, bool offscreen = false);
   virtual ~Canvas() {};
+  void start();
+  void makeSnapshot();
   void fillRectangle(const Sint16& x, const Sint16& y, const Uint16& w, const Uint16& h, const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a);
+  void fill(const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a);
   void update();
   void save(const string& filename);
   SDL_Surface* getSurface() {
@@ -25,6 +28,7 @@ public:
   }
 private:
   class SDL_Surface *screen;
+  class SDL_Surface *snapshot;
 
   size_t screenWidth;
   size_t screenHeight;

@@ -238,7 +238,11 @@ static void loop(size_t numIterations, string filename) {
           DNA_BEST[otherMutated] = DNA_TEST[otherMutated];
 
         lowestDiff = diff;
-
+        if(bestStep != 0 && bestStep % 100 == 0) {
+          CANVAS->makeSnapshot();
+	  init_dna(DNA_BEST, CANVAS->width(), CANVAS->height());
+	  std::cerr << "snapshot" << std::endl;
+        }
       } else {
         // test sucks, copy best back over test
         DNA_TEST[mutatedRect] = DNA_BEST[mutatedRect];
@@ -307,7 +311,9 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, true);
+    CANVAS = new Canvas(WIDTH, HEIGHT, false);
+    CANVAS->fill(0,0,0,255);
+    CANVAS->makeSnapshot();
     if (argc == 5) {
       std::cerr << argv[4] << std::endl;
       std::ifstream if_dna(argv[4]);

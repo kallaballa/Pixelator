@@ -14,7 +14,7 @@ void draw_rect(const Rectangle& rect, Canvas* canvas) {
 }
 
 void draw_dna(Dna& dna, Canvas* canvas) {
-  SDL_FillRect(canvas->getSurface(), NULL, SDL_MapRGBA(canvas->getSurface()->format,0,0,0,255));
+  canvas->start();
 
   for (size_t i = 0; i < dna.size(); i++) {
     draw_rect(dna[i], canvas);
