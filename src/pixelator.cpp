@@ -307,7 +307,7 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, false);
+    CANVAS = new Canvas(WIDTH, HEIGHT, true);
     if (argc == 5) {
       std::cerr << argv[4] << std::endl;
       std::ifstream if_dna(argv[4]);
