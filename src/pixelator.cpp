@@ -259,7 +259,7 @@ static void loop(size_t numIterations, string filename) {
           ++invisible;
       }
       if (testStep != 0 && testStep % 100 == 0) {
-        std::cout << fitness << '\t' << 1000000.0/(microseconds/100) << '\t' << invisible << '\t' << testStep << std::endl;
+        std::cout << fitness << '\t' << 1000000.0/(microseconds/100) << '\t' << invisible << '\t' << testStep << '\t' << boost::filesystem::path(filename).stem().string() << std::endl;
         std::cout.flush();
         microseconds = 0;
       }
@@ -270,6 +270,7 @@ static void loop(size_t numIterations, string filename) {
   string prefix = boost::filesystem::path(filename).stem().string();
   std::stringstream ssname;
   ssname << "result/" << prefix << "_result.png";
+  draw_dna(DNA_BEST, CANVAS);
   CANVAS->save(ssname.str());
 
   /*
