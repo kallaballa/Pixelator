@@ -11,6 +11,7 @@
 #include <boost/filesystem.hpp>
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_gfxPrimitives.h>
+#include <signal.h>
 
 #include "canvas.hpp"
 #include "features.hpp"
@@ -18,6 +19,7 @@
 #include "dna.hpp"
 #include "draw.hpp"
 #include "time_tracker.hpp"
+
 
 using std::vector;
 
@@ -32,6 +34,12 @@ Dna DNA_BEST(1);
 Dna DNA_TEST(1);
 
 int mutatedRect;
+
+void signal_callback_handler(int signum)
+{
+  std::cerr << "Caught signal: " << std::to_string(signum) << std::endl;
+  CANVAS->save("result/dump.png");
+}
 
 void get_pixel(SDL_Surface *surface, const int& x, const int& y, Uint8& r,Uint8& g,Uint8& b,Uint8& a)
 {
@@ -323,7 +331,7 @@ int main(int argc, char ** argv) {
     } else {
       init_dna(DNA_BEST, WIDTH, HEIGHT);
     }
-
+    signal(SIGUSR1, signal_callback_handler);
     loop(numIterations, filename);
   }
 }
