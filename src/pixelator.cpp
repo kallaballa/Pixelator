@@ -181,7 +181,30 @@ double diff_pixels(SDL_Surface* testSurf) {
   Uint8 goalB;
   Uint8 goalG;
   Uint8 goalR;
-  Uint8 a;
+  Uint8* pt = (Uint8*)testSurf->pixels;
+  Uint8* pg = (Uint8*)GOAL_SURF->pixels;
+
+  for (size_t i = 0;  i < (HEIGHT * WIDTH); i++) {
+    localDiff = 0;
+    testR = *pt;
+    testG = *(pt + 1);
+    testB = *(pt + 2);
+
+    goalR = *pg;
+    goalG = *(pg + 1);
+    goalB = *(pg + 2);
+
+    localDiff += abs(testR - goalR);
+    localDiff += abs(testG - goalG);
+    localDiff += abs(testB - goalB);
+
+    difference += localDiff;
+
+    pt += 4;
+    pg += 3;
+  }
+
+/*  Uint8 a;
   for (size_t y = 0; y < HEIGHT; y++) {
     for (size_t x = 0; x < WIDTH; x++) {
       localDiff = 0;
@@ -195,7 +218,7 @@ double diff_pixels(SDL_Surface* testSurf) {
 
       difference += localDiff;
     }
-  }
+  }*/
 
   return ((double)difference / (double)(HEIGHT * WIDTH * 4.0)) / (double)255.0;
 }

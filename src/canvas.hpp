@@ -13,6 +13,7 @@ public:
   virtual ~Canvas() {};
   void start();
   void makeSnapshot();
+  void blitRect(uint x, uint y, uint w, uint h, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
   void fillRectangle(const Sint16& x, const Sint16& y, const Uint16& w, const Uint16& h, const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a);
   void fill(const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a);
   void update();

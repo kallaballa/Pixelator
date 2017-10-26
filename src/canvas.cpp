@@ -27,6 +27,21 @@ Canvas::Canvas(size_t screenWidth, size_t screenHeight, bool offscreen) :
   }
 }
 
+void Canvas::blitRect(uint x, uint y, uint w, uint h, Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
+  SDL_Surface *sfc = SDL_CreateRGBSurface(0, w, h, 32, 0, 0, 0, SDL_SWSURFACE);
+  SDL_FillRect(sfc, NULL, SDL_MapRGBA(screen->format, r, g ,b, a));
+  SDL_SetAlpha(sfc, SDL_SRCALPHA, a);
+
+  SDL_Rect rect;
+  rect.x = x;
+  rect.y = y;
+  rect.w = w;
+  rect.h = h;
+  SDL_BlitSurface(sfc, NULL, screen, &rect);
+
+  SDL_FreeSurface(sfc);
+}
+
 void checkExit() {
   SDL_Event event;
   if(SDL_PollEvent(&event) && event.type == SDL_QUIT) {
@@ -35,18 +50,19 @@ void checkExit() {
 }
 
 void Canvas::start() {
-  SDL_UpperBlit(snapshot, NULL, screen, NULL);
+  memcpy(screen->pixels, snapshot->pixels, width() * height() * screen->format->BytesPerPixel);
 }
 
 void Canvas::makeSnapshot() {
-  SDL_UpperBlit(screen, NULL, snapshot, NULL);
+  memcpy(snapshot->pixels, screen->pixels, width() * height() * screen->format->BytesPerPixel);
 }
 
 void Canvas::fillRectangle(const Sint16& x, const Sint16& y, const Uint16& w, const Uint16& h, const Uint8& r, const Uint8& g, const Uint8& b, const Uint8& a) {
     checkExit();
-    Sint16 xv[4] = { x, x + w, x + w, x };
+    /*Sint16 xv[4] = { x, x + w, x + w, x };
     Sint16 yv[4] = { y, y, y + h,  y + h};
-    filledPolygonRGBA(screen,xv,yv,4,r,g,b,a);
+    filledPolygonRGBA(screen,xv,yv,4,r,g,b,a);*/
+    blitRect(x,y,w,h,r,g,b,a);
 }
 
 
