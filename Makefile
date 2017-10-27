@@ -6,6 +6,11 @@ LIBS     := -lm `pkg-config --libs x11 opencv sdl SDL_image SDL_gfx libpng16` -l
 DESTDIR := /
 PREFIX := /usr/local
 MACHINE := $(shell uname -m)
+WHERECXX := $(shell whereis g++-7)
+
+ifneq ($(WHERECXX), g++-7:)
+  CXX = g++-7
+endif 
 
 ifeq ($(MACHINE), x86_64)
   LIBDIR = lib64
