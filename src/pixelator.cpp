@@ -66,7 +66,7 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
       dna[i].points[j].x = random_real((double)WIDTH);
       dna[i].points[j].y = random_real((double)HEIGHT);
     }
-
+/*
     size_t x = min(dna[i].points[0].x,dna[i].points[1].x);
     size_t y = min(dna[i].points[0].y,dna[i].points[1].y);
 
@@ -94,6 +94,11 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
     dna[i].g = (dna[i].g + random_real(1.0)) / 2;
     dna[i].b = (dna[i].b + random_real(1.0)) / 2;
     dna[i].a = 0;
+    */
+    dna[i].r = random_real(1.0);
+    dna[i].g = random_real(1.0);
+    dna[i].b = random_real(1.0);
+    dna[i].a = 0;
 
 /*  if(random_real(1.0) > 0.5) {
       dna[i].r = 0;
@@ -108,14 +113,13 @@ void init_dna(Dna& dna, size_t WIDTH, size_t HEIGHT) {
   }
 }
 int mutate(void) {
-  mutatedRect = random_int(DNA_TEST.size());
+  mutatedRect = random_int(DNA_TEST.size() - 1);
   double roulette = random_real(2.8);
   double drastic = random_real(2.0);
 
   // mutate color
   if (roulette < 1) {
     //// completely transparent rects are stupid
-    //
     if (DNA_TEST[mutatedRect].a < 0.01  || roulette < 0.25) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].a += random_real(0.1);
@@ -145,7 +149,7 @@ int mutate(void) {
 
   // mutate rect
   else if (roulette < 2.0) {
-    int pointI = random_int(2);
+    int pointI = random_int(1);
     if (roulette < 1.5) {
       if (drastic < 1) {
         DNA_TEST[mutatedRect].points[pointI].x += random_real(WIDTH/10.0);
@@ -162,7 +166,7 @@ int mutate(void) {
   }
  // mutate stacking
   else {
-    int destination = random_int(DNA_TEST.size());
+    int destination = random_int(DNA_TEST.size() - 1);
     Rectangle r = DNA_TEST[mutatedRect];
     DNA_TEST[mutatedRect] = DNA_TEST[destination];
     DNA_TEST[destination] = r;
@@ -173,8 +177,8 @@ int mutate(void) {
 
 
 double diff_pixels(SDL_Surface* testSurf) {
-  int difference = 0;
-  int localDiff = 0;
+  size_t difference = 0;
+  size_t localDiff = 0;
   Uint8 testB;
   Uint8 testG;
   Uint8 testR;
@@ -289,8 +293,8 @@ static void loop(size_t numIterations, string filename) {
         if(DNA_BEST[i].a == 0.0)
           ++invisible;
       }
-      if (testStep != 0 && testStep % 100 == 0) {
-        std::cout << fitness << '\t' << 1000000.0/(microseconds/100) << '\t' << invisible << '\t' << testStep << '\t' << boost::filesystem::path(filename).stem().string() << std::endl;
+      if (testStep != 0 && testStep % 1000 == 0) {
+        std::cout << fitness << '\t' << 1000000.0/(microseconds/1000) << '\t' << invisible << '\t' << testStep << '\t' << boost::filesystem::path(filename).stem().string() << std::endl;
         std::cout.flush();
         microseconds = 0;
       }
@@ -310,11 +314,11 @@ static void loop(size_t numIterations, string filename) {
   if(FEATURE_MAT.rows > 0)
     imwrite(ssname.str(), FEATURE_MAT);*/
 
-  ssname.str("");
+  /*ssname.str("");
   ssname << "result/" << prefix << ".dna";
   std::ofstream of_dna(ssname.str());
   boost::archive::binary_oarchive oa(of_dna);
-  oa << DNA_BEST;
+  oa << DNA_BEST;*/
 }
 
 int main(int argc, char ** argv) {
