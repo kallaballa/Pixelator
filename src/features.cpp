@@ -125,7 +125,7 @@ void symmetryTest(
 }
 double diff_features(SDL_Surface * test_surf, Mat& goalRGB, Mat& featureMat) {
 #ifndef _NO_OPENCV
-  Mat testRGB(test_surf->w,test_surf->h,CV_8UC3,test_surf->pixels,test_surf->pitch);
+  Mat testRGB(test_surf->w,test_surf->h,CV_8UC4,test_surf->pixels,test_surf->pitch);
   Mat img_1;
   Mat img_2;
 

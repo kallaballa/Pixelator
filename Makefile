@@ -1,7 +1,7 @@
 CXX      := g++
-CXXFLAGS := -pthread -fno-strict-aliasing -std=c++0x -pedantic -Wall `pkg-config --cflags cairo x11 opencv SDL_gfx` 
-LDFLAGS  := -L/opt/local/lib -L../SDL_gfx-2.0.26
-LIBS     := -lm `pkg-config --libs x11 opencv sdl SDL_image SDL_gfx libpng16` -lSDL_gfx -lboost_serialization -lboost_system -lboost_filesystem
+CXXFLAGS := -pthread -fno-strict-aliasing -std=c++0x -pedantic -Wall `pkg-config --cflags cairo x11 SDL_gfx` -I/usr/local/include/opencv2
+LDFLAGS  := -L/opt/local/lib -L../SDL_gfx-2.0.26 -L/usr/local/lib/
+LIBS     := -lm `pkg-config --libs x11 sdl SDL_image SDL_gfx libpng16` -lSDL_gfx -lboost_serialization -lboost_system -lboost_filesystem -lopencv_flann -lopencv_core -lopencv_legacy -lopencv_imgproc -lopencv_highgui -lopencv_calib3d -lopencv_ocl -lopencv_features2d 
 .PHONY: all release debian-release info debug clean debian-clean distclean 
 DESTDIR := /
 PREFIX := /usr/local

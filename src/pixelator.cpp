@@ -205,7 +205,7 @@ double diff_pixels(SDL_Surface* testSurf) {
     difference += localDiff;
 
     pt += 4;
-    pg += 3;
+    pg += 4;
   }
 
 /*  Uint8 a;
@@ -253,11 +253,16 @@ static void loop(size_t numIterations, string filename) {
 
       double featDiff;
 #ifndef _NO_OPENCV
-      if(pixDiff < 0.00)
-        featDiff = diff_features(CANVAS->getSurface(), GOAL_RGB, FEATURE_MAT);
+      if(pixDiff < 0.05)
+	featDiff = diff_features(CANVAS->getSurface(), GOAL_RGB, FEATURE_MAT);
       else
-#endif
 	featDiff = 1.0;
+#else
+      featDiff = 1.0;
+#endif
+//
+      if(FEATURE_MAT.cols > 0 && FEATURE_MAT.rows > 0)
+	imshow("", FEATURE_MAT);
 
       assert(featDiff <= 1.0 && featDiff >= 0.0);
 
@@ -339,15 +344,15 @@ int main(int argc, char ** argv) {
     unsigned char goal_b;
     for (size_t y = 0; y < HEIGHT; y++) {
       for (size_t x = 0; x < WIDTH; x++) {
-        int thispixel = y * WIDTH * 3 + x * 3;
+        int thispixel = y * WIDTH * 4 + x * 4;
         goal_b = GOAL_DATA[thispixel];
         GOAL_DATA[thispixel] = GOAL_DATA[thispixel + 2];
         GOAL_DATA[thispixel + 2] = goal_b;
       }
     }
 
-    GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC3,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, true);
+    GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC4,GOAL_DATA,GOAL_SURF->pitch);
+    CANVAS = new Canvas(WIDTH, HEIGHT, false);
     CANVAS->fill(0,0,0,255);
     CANVAS->makeSnapshot();
     if (argc == 5) {
