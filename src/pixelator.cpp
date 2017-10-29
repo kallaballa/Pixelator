@@ -352,7 +352,7 @@ int main(int argc, char ** argv) {
     }
 
     GOAL_RGB = Mat(WIDTH,HEIGHT,CV_8UC4,GOAL_DATA,GOAL_SURF->pitch);
-    CANVAS = new Canvas(WIDTH, HEIGHT, false);
+    CANVAS = new Canvas(WIDTH, HEIGHT, true);
     CANVAS->fill(0,0,0,255);
     CANVAS->makeSnapshot();
     if (argc == 5) {
